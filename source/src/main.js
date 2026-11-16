@@ -21,7 +21,10 @@ if (!navigator.gpu) {
   return;
 }
 const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
-if (!adapter) fail('No WebGPU adapter found.');
+if (!adapter) {
+  await legacyFallback();
+  return;
+}
 $('w').hidden = !!navigator.userAgentData; // only Chromium-based browsers have it
 const hasTS = adapter.features.has('timestamp-query');
 const device = await adapter.requestDevice({ requiredFeatures: hasTS ? ['timestamp-query'] : [] });
